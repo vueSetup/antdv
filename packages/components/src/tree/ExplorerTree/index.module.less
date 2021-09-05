@@ -1,0 +1,146 @@
+.explorerTree {
+    // padding: 10px;
+
+    li {
+        padding: 0 !important;
+        position: relative;
+
+        // .i-icon {
+        //     display: flex;
+        //     align-items: center;
+        //     height: 36px;
+        // }
+        :global {
+            .anticon.ant-tree-switcher-icon {
+                height: 36px !important;
+                width: 100%;
+                display: flex !important;
+                justify-content: center;
+                align-items: center;
+                font-size: 14px;
+            }
+
+            span.ant-tree-switcher {
+                height: 36px !important;
+                margin-right: 4px;
+                z-index: 1;
+            }
+
+            .ant-tree-checkbox {
+                height: 36px !important;
+                line-height: unset !important;
+
+                .ant-tree-checkbox-inner {
+                    display: inline-block;
+                    top: 50% !important;
+                    transform: translate(0%, -50%);
+                }
+            }
+
+            .ant-tree-checkbox:hover {
+                border-color: transparent !important;
+            }
+
+            .ant-tree-iconEle {
+                height: 36px !important;
+                position: relative;
+                z-index: 1;
+            }
+
+            .ant-tree-node-content-wrapper {
+                width: 100%;
+                position: relative;
+                height: 36px !important;
+                padding: 0 !important;
+
+                .ant-tree-title {
+                    width: calc(100% - 44px);
+                    display: inline-block;
+                    position: relative;
+                    z-index: 1;
+                    height: 36px !important;
+                    line-height: 36px !important;
+                }
+
+                .ant-row {
+                    align-items: center;
+                    height: 36px;
+                }
+
+                // .iconfont {
+                //     color: #3e94ea;
+                // }
+            }
+
+            .ant-tree-node-selected {
+                color: #418bfb !important;
+            }
+
+            .ant-tree-node-selected:after {
+                content: ' ';
+                height: 100%;
+                display: inline-block;
+                width: calc(100% + 1920px);
+                background-color: #dcebfe;
+                z-index: 0;
+                position: absolute;
+                top: 0;
+                right: 0;
+            }
+
+            .ant-tree-node-content-wrapper:hover {
+                background-color: transparent !important;
+            }
+        }
+    }
+
+    :global {
+        .ant-tree-treenode-selected {
+            .ant-tree-checkbox-inner {
+                z-index: 2
+            }
+        }
+    }
+
+    .more {
+        align-items: center;
+
+        :global {
+            .ant-pro-dropdown.ant-pro-dropdown-action:hover {
+                background-color: rgba(0, 0, 0, .06);
+            }
+
+            .ant-dropdown-open {
+                background-color: rgba(0, 0, 0, .2)
+            }
+
+            .anticon {
+                height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            // .i-icon {
+            //     height: 32px;
+            //     width: 32px;
+            //     align-items: center;
+            //     justify-content: center;
+            //     display: flex;
+            //     padding: 0;
+
+            //     svg {
+            //         margin: 0;
+            //     }
+            // }
+        }
+
+    }
+
+    // .iconfont {
+    //     font-size: 16px;
+    //     height: 36px;
+    //     display: flex;
+    //     align-items: center;
+    // }
+}

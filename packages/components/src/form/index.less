@@ -1,0 +1,74 @@
+﻿@import '~ant-design-vue/es/style/themes/default.less';
+
+@pro-form-group-prefix-cls: ~'@{ant-prefix}-pro-form-group';
+
+.@{pro-form-group-prefix-cls} {
+    &-title {
+        margin-bottom: @margin-md;
+        font-weight: bold;
+
+        &::before {
+            content: '';
+            display: inline-block;
+            height: 16px;
+            width: 3px;
+            background: #209bfa;
+            position: absolute;
+            left: 0;
+            top: calc(50% - 8px);
+        }
+
+        font-size: @font-size-lg;
+        padding-left: @padding-sm;
+        line-height: @height-lg;
+        position: relative;
+        border-bottom: 1px solid #eee;
+
+        span {
+            font-weight: normal;
+            font-size: @font-size-base;
+        }
+    }
+    &-container {
+        flex-wrap: wrap;
+        max-width: 100%;
+        > div.@{ant-prefix}-space-item {
+            max-width: 100%;
+        }
+    }
+
+    &-twoLine {
+        display: block;
+        width: 100%;
+
+        .@{pro-form-group-prefix-cls}-title {
+            width: 100%;
+            margin: 8px 0;
+        }
+        .@{pro-form-group-prefix-cls}-container {
+            padding-left: 16px;
+        }
+
+        .@{ant-prefix}-space-item,
+        .@{ant-prefix}-form-item {
+            width: 100%;
+        }
+
+        .@{ant-prefix}-form-item {
+            &-control {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+
+                &-input {
+                    align-items: center;
+                    justify-content: flex-end;
+
+                    &-content {
+                        flex: none;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,34 @@
+{
+  "name": "antdv",
+  "private": true,
+  "repository": "https://github.com/vueSetup/antdv.git",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "clean": "lerna clean",
+    "start": "yarn workspace @antdv/components start",
+    "commit": "git-cz"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "dependencies": {
+    "ant-design-vue": "^2.2.6",
+    "vue": "^3.2.8"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-legacy": "^1.5.2",
+    "@vitejs/plugin-vue": "^1.6.0",
+    "@vitejs/plugin-vue-jsx": "^1.1.7",
+    "@vue/compiler-sfc": "^3.2.8",
+    "commitizen": "^4.2.4",
+    "lerna": "^4.0.0",
+    "typescript": "^4.4.2",
+    "vite": "^2.5.3"
+  }
+}
