@@ -1,6 +1,6 @@
 # @antdv/components
 
-The Series components are placed here to support heavy-duty components.
+The Series components are placed here to support heavy-duty components.***
 
 ## Contributing
 
