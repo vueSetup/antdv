@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "src/index.ts",
     "scripts": {
-        "start": "vitepress dev docs"
+        "start": "vitepress dev docs --open"
     },
     "dependencies": {
         "lodash-es": "^4.17.21"

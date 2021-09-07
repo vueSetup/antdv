@@ -1,0 +1,19 @@
+// https://www.typescriptlang.org/tsconfig
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "skipLibCheck": true,
+        "importHelpers": true,
+        "resolveJsonModule": true,
+        "strict": true,
+        "strictNullChecks": false,
+        "noImplicitAny": false,
+        "jsx": "preserve",
+        "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
+        "types": ["webpack-env"]
+    }
+}

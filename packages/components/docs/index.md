@@ -12,7 +12,7 @@ Based on the same idea, ProTable wants to abstract a layer to solve the problem 
 
 This wrapping pattern allows the front-end to get away from all kinds of state management and focus on business development, and is more intuitive without the need for data flow solutions like dva, redux, etc. The developer only needs to define a state and the heavy component will automatically generate a set of behaviors.
 
-> For incremental use we also provide the same api as Ant Design, which can be completely downgraded to an Ant Design table.
+> For incremental use we also provide the same api as [Ant Design of Vue](https://2x.antdv.com/components/overview/), which can be completely downgraded to an Ant Design Vue table.
 
 ### A component ≈ a page
 
