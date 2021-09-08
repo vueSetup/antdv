@@ -2,10 +2,10 @@ import './index.less'
 
 import {
     defineComponent,
+    shallowRef,
     shallowReactive,
     watchEffect,
     toRef,
-    onMounted,
     PropType,
     ExtractPropTypes
 } from 'vue'
@@ -64,15 +64,15 @@ const Table = defineComponent({
     setup(props, { slots, emit }) {
         const { params, actionRef, size, options } = props
 
+        const container = shallowRef<HTMLElement | null>(null)
+
         // @ts-ignore
         const columns = useBasicColumns(toRef(props, 'columns'))
 
         const state = shallowReactive<{
-            container: HTMLElement | null
             tableSize: TableSize
             params: Record<string, any>
         }>({
-            container: null,
             tableSize: size,
             params
         })
@@ -115,13 +115,9 @@ const Table = defineComponent({
             if (document.fullscreenElement) {
                 document.exitFullscreen()
             } else {
-                actionRef.container?.requestFullscreen()
+                container.value?.requestFullscreen()
             }
         }
-
-        onMounted(() => {
-            actionRef.container = state.container
-        })
 
         const prefixCls = 'ant-pro'
         const baseClassName = `${prefixCls}-table`
@@ -131,7 +127,7 @@ const Table = defineComponent({
         // const toolBarRender = getComponent(this, 'toolBarRender')
 
         return () => (
-            <div class={baseClassName} ref="container">
+            <div class={baseClassName} ref={container}>
                 <Card
                     style={{ height: '100%' }}
                     bordered={false}

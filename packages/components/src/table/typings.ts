@@ -23,5 +23,4 @@ export type ActionType = {
     fullscreen?: () => void
     tableSize?: (size?: TableSize) => string
     search?: (keyword: string) => void
-    container?: HTMLElement
 }
