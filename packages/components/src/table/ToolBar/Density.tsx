@@ -14,7 +14,7 @@ const Density = defineComponent({
     props: densityProps,
     setup(props, { emit }) {
         const { tableSize, setTableSize } = props
-        
+
         const state = reactive({
             selectedKeys: [tableSize]
         })
@@ -26,10 +26,7 @@ const Density = defineComponent({
             }
         )
 
-        return { ...toRefs(state) }
-    },
-    render() {
-        return (
+        return () => (
             <Tooltip title="表格密度">
                 <Dropdown
                     placement="bottomRight"
@@ -38,12 +35,14 @@ const Density = defineComponent({
                         <Menu
                             selectable
                             style={{ width: '80px' }}
-                            v-model={[this.selectedKeys, 'selectedKeys']}>
+                            v-model={[state.selectedKeys, 'selectedKeys']}
+                        >
                             <Item key="default">默认</Item>
                             <Item key="middle">中等</Item>
                             <Item key="small">紧凑</Item>
                         </Menu>
-                    }>
+                    }
+                >
                     <ColumnHeightOutlined />
                 </Dropdown>
             </Tooltip>
