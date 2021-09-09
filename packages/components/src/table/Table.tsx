@@ -123,7 +123,7 @@ const Table = defineComponent({
         const baseClassName = `${prefixCls}-table`
 
         // TODO:: getComponent in setup
-        const toolBarRender = undefined
+        const toolBarRender = props.toolBarRender || slots.toolBarRender || false
         // const toolBarRender = getComponent(this, 'toolBarRender')
 
         return () => (
