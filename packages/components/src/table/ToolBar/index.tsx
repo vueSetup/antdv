@@ -11,7 +11,7 @@ import { omit } from 'lodash-es'
 
 export const toolBarProps = {
     actionRef: Object as PropType<ActionType>,
-    toolBarRender: [Boolean, Function, Object] as PropType<CustomRender>,
+    toolBarRender: [Boolean, Function, Object] as PropType<WithFalse<CustomRender>>,
     options: Object as PropType<WithFalse<OptionConfig>>,
     onSearch: Function as PropType<(params: Record<string, any>) => void>
 }
