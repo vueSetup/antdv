@@ -62,7 +62,7 @@ const Table = defineComponent({
     name: 'AntdvTable',
     props: tableProps,
     setup(props, { slots, emit }) {
-        const { params, actionRef, size, options } = props
+        const { actionRef = { reload: () => {} }, params, size, options } = props
 
         const container = shallowRef<HTMLElement | null>(null)
 

@@ -14,7 +14,7 @@ export const basicTableProps = {
         ) => any | Promise<any>
     >,
     postData: Function as PropType<(data: any) => ResponseData<any> | Promise<ResponseData<any>>>,
-    params: Object as PropType<Record<string, any>>,
+    params: Object,
     actionRef: Object as PropType<ActionType>
 }
 
