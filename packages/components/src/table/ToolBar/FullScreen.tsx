@@ -1,31 +1,26 @@
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, onMounted, reactive } from 'vue'
 import { Tooltip } from 'ant-design-vue'
-import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons-vue';
+import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons-vue'
 
 const FullScreen = defineComponent({
     setup() {
-        const fullscreenState = ref<boolean>(false)
+        const state = reactive({
+            fullscreenState: false
+        })
 
         onMounted(() => {
             document.onfullscreenchange = () => {
-                if (document.fullscreenElement) {
-                    fullscreenState.value = true
-                } else {
-                    fullscreenState.value = false
-                }
+                state.fullscreenState = !!document.fullscreenElement
             }
         })
 
-        return { fullscreenState }
-    },
-    render() {
-        return this.fullscreenState ?
-            (
-                <Tooltip title='退出全屏'>
+        return () =>
+            state.fullscreenState ? (
+                <Tooltip title="退出全屏">
                     <FullscreenExitOutlined />
                 </Tooltip>
             ) : (
-                <Tooltip title='全屏'>
+                <Tooltip title="全屏">
                     <FullscreenOutlined />
                 </Tooltip>
             )

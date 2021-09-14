@@ -2,19 +2,28 @@ import './index.less'
 
 import {
     defineComponent,
+    shallowRef,
     shallowReactive,
-    onMounted,
-    toRefs,
-    PropType,
     watchEffect,
-    App,
+    toRef,
+    PropType,
     ExtractPropTypes
 } from 'vue'
 import { Card } from 'ant-design-vue'
 import Toolbar, { toolBarProps } from './ToolBar'
 import BasicTable, { basicTableProps } from './BasicTable'
+import { ColumnProps as AColumnProps } from 'ant-design-vue/es/table/interface'
+import { useBasicColumns } from './useColumns'
 import { TableSize, ActionType } from './typings'
-import { getComponent } from '../utils/props'
+// import { getComponent } from '../utils/props'
+import { omit } from 'lodash'
+
+export type ColumnProps = AColumnProps & {
+    valueEnum?: Record<
+        number | string,
+        { text: string; status?: 'default' | 'error' | 'success' | 'warning' | 'processing' }
+    >
+}
 
 // TODO :: defaultProps?
 const defaultTableProps = {
@@ -43,7 +52,8 @@ const defaultTableProps = {
 export const tableProps = {
     ...basicTableProps,
     ...defaultTableProps,
-    ...toolBarProps
+    ...toolBarProps,
+    columns: Array as PropType<ColumnProps[]>
 }
 
 export type TableProps = ExtractPropTypes<typeof tableProps>
@@ -52,17 +62,18 @@ const Table = defineComponent({
     name: 'AntdvTable',
     props: tableProps,
     setup(props, { slots, emit }) {
-        const { params, actionRef, size } = props
+        const { actionRef = { reload: () => {} }, params, size, options } = props
+
+        const container = shallowRef<HTMLElement | null>(null)
+
+        // @ts-ignore
+        const columns = useBasicColumns(toRef(props, 'columns'))
 
         const state = shallowReactive<{
-            container: HTMLElement | null
             tableSize: TableSize
-            actionRef: ActionType
             params: Record<string, any>
         }>({
-            container: null,
             tableSize: size,
-            actionRef: actionRef || { reload: () => {} },
             params
         })
 
@@ -70,21 +81,28 @@ const Table = defineComponent({
             state.params = props.params
         })
 
-        const onSearch = keyword => {
-            // Object.assign(state.params, keyword)
-            // Object.assign(state, { params: { ...state.params, ...keyword } })
-            state.params = { ...state.params, ...keyword }
-        }
-
-        state.actionRef.fullscreen = () => {
-            if (!document.fullscreenElement) {
-                state.actionRef.container.requestFullscreen()
-            } else {
-                document.exitFullscreen()
+        // TODO:: refactor?
+        actionRef.search = (keyword: string) => {
+            if (options && options.search) {
+                const search = {}
+                if (options.search === true) {
+                    search['keyword'] = keyword
+                } else {
+                    search[options.search.name] = keyword
+                }
+                if (keyword) {
+                    state.params = { ...state.params, ...search }
+                } else {
+                    if (options.search === true) {
+                        state.params = omit(state.params, 'keyword')
+                    } else {
+                        state.params = omit(state.params, options.search.name)
+                    }
+                }
             }
         }
 
-        state.actionRef.tableSize = (size?: TableSize) => {
+        actionRef.tableSize = (size?: TableSize) => {
             if (size) {
                 state.tableSize = size
             } else {
@@ -93,21 +111,23 @@ const Table = defineComponent({
             return size
         }
 
-        onMounted(() => {
-            state.actionRef.container = state.container
-        })
+        actionRef.fullscreen = () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen()
+            } else {
+                container.value?.requestFullscreen()
+            }
+        }
 
-        return { ...toRefs(state), onSearch }
-    },
-    render() {
-        const { prefixCls = 'ant-pro', options, params, ...others } = this.$props
-
-        const toolBarRender = getComponent(this, 'toolBarRender')
-
+        const prefixCls = 'ant-pro'
         const baseClassName = `${prefixCls}-table`
 
-        return (
-            <div class={baseClassName} ref="container">
+        // TODO:: getComponent in setup
+        const toolBarRender = props.toolBarRender || slots.toolBarRender || false
+        // const toolBarRender = getComponent(this, 'toolBarRender')
+
+        return () => (
+            <div class={baseClassName} ref={container}>
                 <Card
                     style={{ height: '100%' }}
                     bordered={false}
@@ -120,25 +140,20 @@ const Table = defineComponent({
                     <Toolbar
                         toolBarRender={toolBarRender}
                         options={options}
-                        actionRef={this.actionRef}
-                        onSearch={this.onSearch}
+                        actionRef={actionRef}
                     />
                     <BasicTable
-                        {...others}
-                        v-slots={this.$slots}
-                        actionRef={this.actionRef}
-                        params={this.params}
-                        size={this.tableSize}
+                        {...props}
+                        columns={columns.value}
+                        actionRef={actionRef}
+                        params={state.params}
+                        size={state.tableSize}
+                        v-slots={slots}
                     />
                 </Card>
             </div>
         )
     }
 })
-
-Table.install = function(app: App) {
-    app.component(Table.name, Table)
-    return app
-}
 
 export default Table

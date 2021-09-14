@@ -22,5 +22,5 @@ export type ActionType = {
     reload: (resetPageIndex?: boolean) => void | Promise<void>
     fullscreen?: () => void
     tableSize?: (size?: TableSize) => string
-    container?: HTMLElement
+    search?: (keyword: string) => void
 }

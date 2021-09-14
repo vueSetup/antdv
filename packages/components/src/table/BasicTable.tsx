@@ -1,30 +1,11 @@
-import {
-    defineComponent,
-    reactive,
-    watch,
-    toRefs,
-    ExtractPropTypes,
-    PropType,
-    watchEffect,
-    toRef,
-    App
-} from 'vue'
-import { Table } from 'ant-design-vue'
-import { tableProps, ColumnProps } from 'ant-design-vue/es/table/interface'
+import { defineComponent, reactive, watch, toRefs, ExtractPropTypes, PropType, toRef } from 'vue'
+import Table from 'ant-design-vue/es/table'
+import { tableProps } from 'ant-design-vue/es/table/interface'
 import { useFetchPagedData, RequestParams, ResponseData } from '../composables'
 import { ActionType } from './typings'
-import { useBasicColumns } from './useColumns'
-
-export type BasicColumnProps = ColumnProps & {
-    valueEnum?: Record<
-        number | string,
-        { text: string; status?: 'default' | 'error' | 'success' | 'warning' | 'processing' }
-    >
-}
 
 export const basicTableProps = {
     ...tableProps,
-    columns: Array as PropType<BasicColumnProps[]>,
     request: Function as PropType<
         (
             params: { current: number; pageSize: number; [key: string]: any },
@@ -33,7 +14,7 @@ export const basicTableProps = {
         ) => any | Promise<any>
     >,
     postData: Function as PropType<(data: any) => ResponseData<any> | Promise<ResponseData<any>>>,
-    params: Object as PropType<Record<string, any>>,
+    params: Object,
     actionRef: Object as PropType<ActionType>
 }
 
@@ -41,11 +22,8 @@ export type BasicTableProps = ExtractPropTypes<typeof basicTableProps>
 
 const BasicTable = defineComponent({
     props: basicTableProps,
-    setup(props, { emit }) {
+    setup(props, { slots, emit }) {
         const { request, postData, params, actionRef, pagination } = props
-
-        // @ts-ignore
-        const columns = useBasicColumns(toRef(props, 'columns'))
 
         // TODO :: if pagination === false then current = 1 & pageSize = 10 ?
         const current =
@@ -85,37 +63,27 @@ const BasicTable = defineComponent({
         ) => {
             options.current = pagination.current
             options.pageSize = pagination.pageSize
-            options.sorter = sorter
             options.filters = filters
+            options.sorter = sorter
             emit('change', pagination, filters, sorter)
         }
 
-        return { ...toRefs(state), columns, chagePageInfo }
-    },
-    render() {
-        const { pagination, ...others } = this.$props
-        return (
+        return () => (
             <Table
-                {...others}
-                columns={this.columns}
-                loading={this.loading}
-                dataSource={this.data}
+                {...props}
+                loading={state.loading}
+                dataSource={state.data}
                 pagination={{
                     ...(pagination as ExtractPropTypes<typeof tableProps['pagination']>),
-                    current: this.current,
-                    pageSize: this.pageSize,
-                    total: this.total
+                    current: state.current,
+                    pageSize: state.pageSize,
+                    total: state.total
                 }}
-                onChange={this.chagePageInfo}
-                v-slots={this.$slots}
+                onChange={chagePageInfo}
+                v-slots={slots}
             />
         )
     }
 })
-
-BasicTable.install = (app: App) => {
-    app.component(BasicTable.name, BasicTable)
-    return app
-}
 
 export default BasicTable
