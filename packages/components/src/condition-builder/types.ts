@@ -1,3 +1,5 @@
+// https://github.com/baidu/amis/blob/master/src/components/condition-builder/types.ts
+
 export type FieldTypes =
   | 'text'
   | 'number'
@@ -5,7 +7,7 @@ export type FieldTypes =
   | 'date'
   | 'time'
   | 'datetime'
-  | 'select';
+  | 'select'
 
 export type OperatorType =
   | 'equal'
@@ -25,135 +27,135 @@ export type OperatorType =
   | 'select_equals'
   | 'select_not_equals'
   | 'select_any_in'
-  | 'select_not_any_in';
+  | 'select_not_any_in'
 
 export type FieldItem = {
-  type: 'text';
-  operators: Array<OperatorType>;
-};
+  type: 'text'
+  operators: Array<OperatorType>
+}
 
-export type ExpressionSimple = string | number | object | undefined;
+export type ExpressionSimple = string | number | object | undefined
 export type ExpressionValue =
   | ExpressionSimple
   | {
-      type: 'value';
-      value: ExpressionSimple;
-    };
+    type: 'value'
+    value: ExpressionSimple
+  }
 export type ExpressionFunc = {
-  type: 'func';
-  func: string;
-  args: Array<ExpressionComplex>;
-};
+  type: 'func'
+  func: string
+  args: Array<ExpressionComplex>
+}
 export type ExpressionField = {
-  type: 'field';
-  field: string;
-};
+  type: 'field'
+  field: string
+}
 export type ExpressionFormula = {
-  type: 'formula';
-  value: string;
-};
+  type: 'formula'
+  value: string
+}
 
 export type ExpressionComplex =
   | ExpressionValue
   | ExpressionFunc
   | ExpressionField
-  | ExpressionFormula;
+  | ExpressionFormula
 
 export interface ConditionRule {
-  id: any;
-  left?: ExpressionComplex;
-  op?: OperatorType;
-  right?: ExpressionComplex | Array<ExpressionComplex>;
+  id: any
+  left?: ExpressionComplex
+  op?: OperatorType
+  right?: ExpressionComplex | Array<ExpressionComplex>
 }
 
 export interface ConditionGroupValue {
-  id: string;
-  conjunction: 'and' | 'or';
-  not?: boolean;
-  children?: Array<ConditionRule | ConditionGroupValue>;
+  id: string
+  conjunction: 'and' | 'or'
+  not?: boolean
+  children?: Array<ConditionRule | ConditionGroupValue>
 }
 
-export interface ConditionValue extends ConditionGroupValue {}
+export interface ConditionValue extends ConditionGroupValue { }
 
 interface BaseField {
-  type: FieldTypes;
-  label: string;
-  valueTypes?: Array<'value' | 'field' | 'func' | 'formula'>;
-  operators?: Array<string>;
+  type: FieldTypes
+  label: string
+  valueTypes?: Array<'value' | 'field' | 'func' | 'formula'>
+  operators?: Array<string>
 
   // valueTypes 里面配置 func 才有效。
-  funcs?: Array<string>;
+  funcs?: Array<string>
 
-  defaultValue?: any;
-  placeholder?: string;
+  defaultValue?: any
+  placeholder?: string
 }
 
 export type FieldGroup = {
-  label: string;
-  children: Array<FieldSimple>;
-};
+  label: string
+  children: Array<FieldSimple>
+}
 
 interface TextField extends BaseField {
-  name: string;
-  type: 'text';
-  minLength?: number;
-  maxLength?: number;
+  name: string
+  type: 'text'
+  minLength?: number
+  maxLength?: number
 }
 
 interface NumberField extends BaseField {
-  name: string;
-  type: 'number';
-  maximum?: number;
-  minimum?: number;
-  step?: number;
-  precision?: number;
+  name: string
+  type: 'number'
+  maximum?: number
+  minimum?: number
+  step?: number
+  precision?: number
 }
 
 interface DateField extends BaseField {
-  name: string;
-  type: 'date';
-  format?: string;
-  inputFormat?: string;
-  minDate?: any;
-  maxDate?: any;
+  name: string
+  type: 'date'
+  format?: string
+  inputFormat?: string
+  minDate?: any
+  maxDate?: any
 }
 
 interface TimeField extends BaseField {
-  name: string;
-  type: 'time';
-  minTime?: any;
-  maxTime?: any;
-  format?: string;
-  inputFormat?: string;
+  name: string
+  type: 'time'
+  minTime?: any
+  maxTime?: any
+  format?: string
+  inputFormat?: string
 }
 
 interface DatetimeField extends BaseField {
-  type: 'datetime';
-  name: string;
-  format?: string;
-  inputFormat?: string;
-  timeFormat?: string;
+  type: 'datetime'
+  name: string
+  format?: string
+  inputFormat?: string
+  timeFormat?: string
 }
 
 interface SelectField extends BaseField {
-  type: 'select';
-  name: string;
-  multiple?: boolean;
-  options?: Array<any>;
-  source?: string;
-  searchable?: boolean;
+  type: 'select'
+  name: string
+  multiple?: boolean
+  options?: Array<any>
+  source?: string
+  searchable?: boolean
 }
 
 interface BooleanField extends BaseField {
-  type: 'boolean';
-  name: string;
+  type: 'boolean'
+  name: string
 }
 
 interface GroupField {
-  type: 'group';
-  label: string;
-  name: string;
-  children: Array<FieldSimple>;
+  type: 'group'
+  label: string
+  name: string
+  children: Array<FieldSimple>
 }
 
 export type FieldSimple =
@@ -163,30 +165,30 @@ export type FieldSimple =
   | TimeField
   | DatetimeField
   | SelectField
-  | BooleanField;
+  | BooleanField
 
-export type Field = FieldSimple | FieldGroup | GroupField;
+export type Field = FieldSimple | FieldGroup | GroupField
 
 export interface FuncGroup {
-  label: string;
-  children: Array<Func>;
+  label: string
+  children: Array<Func>
 }
 
 export interface Func {
-  type: string;
-  returnType: FieldTypes;
-  args: Array<FuncArg>;
-  label: string;
+  type: string
+  returnType: FieldTypes
+  args: Array<FuncArg>
+  label: string
 }
 export interface FuncArg extends BaseField {
-  isOptional?: boolean;
+  isOptional?: boolean
 }
-export type Funcs = Array<Func | FuncGroup>;
-export type Fields = Array<Field>;
+export type Funcs = Array<Func | FuncGroup>
+export type Fields = Array<Field>
 
 export type Type = {
-  defaultOp?: OperatorType;
-  operators: Array<OperatorType>;
-  placeholder?: string;
-  valueTypes?: Array<'value' | 'field' | 'func' | 'formula'>;
-};
+  defaultOp?: OperatorType
+  operators: Array<OperatorType>
+  placeholder?: string
+  valueTypes?: Array<'value' | 'field' | 'func' | 'formula'>
+}

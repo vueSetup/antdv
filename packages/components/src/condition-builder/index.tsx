@@ -1,62 +1,68 @@
 import './index.less'
 
-import { defineComponent, PropType, reactive, toRefs } from 'vue'
+import { defineComponent, reactive, watchEffect, toRefs, PropType, ExtractPropTypes } from 'vue'
 import { Fields, ConditionGroupValue, Funcs } from './types'
 import defaultConfig, { Config } from './config'
 import ConditionGroup from './Group'
 import { findTreeIndex, spliceTree, getTree, mapTree, guid } from './utils/helper'
+import animtion from './utils/Animation'
 
 // export interface ConditionBuilderProps {
-//   fields: Fields;
-//   funcs?: Funcs;
-//   showNot?: boolean;
-//   value?: ConditionGroupValue;
-//   data?: any;
-//   onChange: (value: ConditionGroupValue) => void;
-//   config?: Config;
+//     fields: Fields
+//     funcs?: Funcs
+//     showNot?: boolean
+//     value?: ConditionGroupValue
+//     data?: any
+//     onChange: (value: ConditionGroupValue) => void
+//     config?: Config
+//     disabled?: boolean
+//     searchable?: boolean
+//     fieldClassName?: string
 // }
 
-const ConditionBuilderProps = {
+export const conditionBuilderProps = {
     fields: Array as PropType<Fields>,
-    funcs: Array as PropType<Funcs | undefined>,
+    funcs: Array as PropType<Funcs>,
     showNot: Boolean,
-    config: Object as PropType<Config>,
-    data: Object,
-    disabled: Boolean,
-    fieldClassName: String,
     value: Object as PropType<ConditionGroupValue>,
-    onChange: Function as PropType<(value: ConditionGroupValue) => void>
+    data: Object as PropType<any>,
+    onChange: Function as PropType<(value: ConditionGroupValue) => void>,
+    config: Object as PropType<Config>,
+    disabled: Boolean,
+    searchable: Boolean,
+    fieldClassName: String
 }
 
-interface ConditionBuilderContextState {
-    config: Config
-    dragTarget?: HTMLElement
-    // dragNextSibling: Element | null;
-    ghost?: HTMLElement
-    host: HTMLElement
-    lastX: number
-    lastY: number
-    lastMoveAt: number
-}
+export type ConditionBuilderProps = ExtractPropTypes<typeof conditionBuilderProps>
 
 const ConditionBuilder = defineComponent({
-    props: ConditionBuilderProps,
-    setup(props) {
-        const state = reactive<ConditionBuilderContextState>({
+    props: conditionBuilderProps,
+    setup(props, { emit }) {
+        const state = reactive<{
+            config?: Config
+            dragTarget?: HTMLElement
+            // dragNextSibling: Element | null
+            ghost?: HTMLElement
+            host?: HTMLElement
+            lastX: number
+            lastY: number
+            lastMoveAt: number
+        }>({
             config: { ...defaultConfig, ...props.config },
-            dragTarget: undefined,
-            ghost: undefined,
-            host: undefined,
-            lastX: undefined,
-            lastY: undefined,
+            lastX: 0,
+            lastY: 0,
             lastMoveAt: 0
+        })
+
+        watchEffect(() => {
+            state.config = { ...defaultConfig, ...props.config }
         })
 
         const handleDragStart = (e: DragEvent) => {
             const target = e.currentTarget as HTMLElement
             const item = target.closest('[data-id]') as HTMLElement
             state.dragTarget = item
-            // this.dragNextSibling = item.nextElementSibling;
+            // state.dragNextSibling = item.nextElementSibling;
             state.host = item.closest('[data-group-id]') as HTMLElement
 
             const ghost = item.cloneNode(true) as HTMLElement
@@ -135,7 +141,7 @@ const ConditionBuilder = defineComponent({
             const cgIdx = children.indexOf(state.ghost)
 
             if (gIdx !== cgIdx) {
-                // animtion.capture(container);
+                animtion.capture(container)
 
                 if (gIdx === children.length - 1) {
                     container.appendChild(state.ghost!)
@@ -143,7 +149,7 @@ const ConditionBuilder = defineComponent({
                     container.insertBefore(state.ghost!, children[gIdx + 1])
                 }
 
-                // animtion.animateAll();
+                animtion.animateAll()
             }
         }
 
@@ -184,55 +190,57 @@ const ConditionBuilder = defineComponent({
             document.body.removeEventListener('drop', handleDragDrop)
 
             state.dragTarget!.classList.remove('is-dragging')
-            // if (this.dragNextSibling) {
-            //   this.dragTarget.parentElement!.insertBefore(
-            //     this.dragTarget,
-            //     this.dragNextSibling
+            // if (state.dragNextSibling) {
+            //   state.dragTarget.parentElement!.insertBefore(
+            //     state.dragTarget,
+            //     state.dragNextSibling
             //   );
             // } else {
-            //   this.dragTarget.parentElement!.appendChild(this.dragTarget);
+            //   state.dragTarget.parentElement!.appendChild(state.dragTarget);
             // }
             delete state.dragTarget
-            // delete this.dragNextSibling;
+            // delete state.dragNextSibling;
             state.ghost!.parentElement?.removeChild(state.ghost!)
             delete state.ghost
         }
 
-        return {
-            ...toRefs(state),
-            handleDragStart,
-            handleDragOver,
-            handleDragDrop,
-            handleDragEnd
-        }
+        return { ...toRefs(state), handleDragStart }
     },
     render() {
-        const { fieldClassName, fields, funcs, onChange, value, showNot, data, disabled } =
-            this.$props
+        const {
+            fieldClassName,
+            fields,
+            funcs,
+            onChange,
+            value,
+            showNot,
+            data,
+            disabled,
+            searchable
+        } = this.$props
 
-        // Error: Maximum recursive updates exceeded.
-        // const normalizedValue = Array.isArray(value?.children)
-        //   ? {
-        //     ...value,
-        //     children: mapTree(value!.children, (value: any) => {
-        //       if (value.id) {
-        //         return value;
-        //       }
+        const normalizedValue = Array.isArray(value?.children)
+            ? {
+                  ...value,
+                  children: mapTree(value!.children, (value: any) => {
+                      if (value.id) {
+                          return value
+                      }
 
-        //       return {
-        //         ...value,
-        //         id: guid()
-        //       };
-        //     })
-        //   }
-        //   : value;
+                      return {
+                          ...value,
+                          id: guid()
+                      }
+                  })
+              }
+            : value
 
         return (
             <ConditionGroup
                 config={this.config}
                 funcs={funcs || this.config.funcs}
                 fields={fields || this.config.fields}
-                value={value as any}
+                value={normalizedValue as any}
                 onChange={onChange}
                 fieldClassName={fieldClassName}
                 removeable={false}
@@ -240,6 +248,7 @@ const ConditionBuilder = defineComponent({
                 showNot={showNot}
                 data={data}
                 disabled={disabled}
+                searchable={searchable}
             />
         )
     }

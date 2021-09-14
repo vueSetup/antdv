@@ -84,6 +84,7 @@ const defaultConfig: Config = {
                 'is_not_empty'
             ]
         },
+
         time: {
             operators: [
                 'equal',
@@ -98,6 +99,7 @@ const defaultConfig: Config = {
                 'is_not_empty'
             ]
         },
+
         datetime: {
             operators: [
                 'equal',
@@ -112,6 +114,7 @@ const defaultConfig: Config = {
                 'is_not_empty'
             ]
         },
+
         select: {
             operators: [
                 'select_equals',
@@ -121,6 +124,7 @@ const defaultConfig: Config = {
             ],
             valueTypes: ['value']
         },
+
         boolean: {
             operators: ['equal', 'not_equal']
         }
