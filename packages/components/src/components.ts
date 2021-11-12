@@ -6,3 +6,5 @@ export { default as Form } from './form'
 
 export type { ExplorerTreeProps } from './tree'
 export { ExplorerTree, ExplorerTreeNode } from './tree'
+
+export { DragIcon } from './icons'

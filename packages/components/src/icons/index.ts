@@ -1,3 +1,1 @@
-import DragOutlined from './DragIcon'
-
-export { DragOutlined }
+export { default as DragIcon } from './DragIcon'

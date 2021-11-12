@@ -1,9 +1,15 @@
-node_modules
+# Build
 dist
-# config files
-.npmrc
 
-# lock files
+# Config
+.npmrc
+.yarnrc
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Lock
 yarn.lock
 package-lock.json
 
@@ -14,6 +20,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+pnpm-debug.log*
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -42,13 +52,6 @@ bower_components
 
 # node-waf configuration
 .lock-wscript
-
-# Compiled binary addons (https://nodejs.org/api/addons.html)
-build/Release
-
-# Dependency directories
-node_modules/
-jspm_packages/
 
 # TypeScript v1 declaration files
 typings/
@@ -89,7 +92,8 @@ typings/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+nuxt.d.ts
+.output
 
 # Gatsby files
 .cache/
@@ -111,3 +115,12 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

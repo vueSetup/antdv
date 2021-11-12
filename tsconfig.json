@@ -1,19 +1,19 @@
-// https://www.typescriptlang.org/tsconfig
 {
     "compilerOptions": {
         "target": "esnext",
         "module": "esnext",
         "moduleResolution": "node",
         "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "skipLibCheck": true,
-        "importHelpers": true,
-        "resolveJsonModule": true,
-        "strict": true,
-        "strictNullChecks": false,
-        "noImplicitAny": false,
         "jsx": "preserve",
-        "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
-        "types": ["webpack-env"]
+        "strict": true,
+        "lib": ["esnext", "dom"],
+        "resolveJsonModule": true,
+        // Vite :: TypeScript Compiler Options
+        // https://vitejs.dev/guide/features.html#typescript-compiler-options
+        "isolatedModules": true,
+        "useDefineForClassFields": true,
+        "paths": {
+            "@antdv/components": ["./packages/components/src/index.ts"]
+        }
     }
 }
