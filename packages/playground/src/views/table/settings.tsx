@@ -1,5 +1,5 @@
-import { computed, defineComponent, watch, reactive, shallowRef } from 'vue'
-import { Table, Card, Row, Tooltip, Popover, Checkbox } from 'ant-design-vue'
+import { computed, defineComponent, watch, reactive } from 'vue'
+import { Table, Card, Row, Tooltip, Popover, Checkbox, Button } from 'ant-design-vue'
 import { SettingOutlined } from '@ant-design/icons-vue'
 import { ColumnProps } from 'ant-design-vue/lib/table'
 import 'ant-design-vue/dist/antd.less'
@@ -86,6 +86,10 @@ export default defineComponent({
             state.isCheckedAll = checked
         }
 
+        const handleReset = () => {
+            state.columnsItems = state.columnsItems.map(item => ({ ...item, checked: true }))
+        };
+
         return () => (
             <Card
                 title={<Row justify='space-between'>
@@ -106,7 +110,7 @@ export default defineComponent({
                                         列展示
                                     </Checkbox>
                                 </div>
-                                <div>重置</div>
+                                <div><a onClick={handleReset}>重置</a></div>
                             </Row>}
                             content={
                                 state.columnsItems.map(column => {
