@@ -1,21 +1,22 @@
-import { defineComponent, onMounted, reactive, shallowRef } from 'vue'
-import { Table } from 'ant-design-vue'
-
+import { computed, defineComponent, watch, reactive, shallowRef } from 'vue'
+import { Table, Card, Row, Tooltip, Popover, Checkbox } from 'ant-design-vue'
+import { SettingOutlined } from '@ant-design/icons-vue'
+import { ColumnProps } from 'ant-design-vue/lib/table'
 import 'ant-design-vue/dist/antd.less'
 
-const columns = [
+const columns: ColumnProps[] = [
     {
-        title: 'Name',
+        title: '姓名',
         dataIndex: 'name',
         key: 'name'
     },
     {
-        title: 'Age',
+        title: '年龄',
         dataIndex: 'age',
         key: 'age'
     },
     {
-        title: 'Address',
+        title: '地址',
         dataIndex: 'address',
         key: 'address'
     }
@@ -50,10 +51,84 @@ const dataSource = [
 
 export default defineComponent({
     setup() {
+        const state = reactive<{
+            isCheckedAll: boolean
+            indeterminate: boolean
+            columnsItems: Record<string, any>[]
+            showColumns: Record<string, any>[]
+        }>({
+            isCheckedAll: true,
+            indeterminate: false,
+            columnsItems: columns.map(column => ({ ...column, checked: true })),
+            showColumns: []
+        })
+
+        watch(
+            () => state.columnsItems,
+            (columnsItems, prevColumnItems) => {
+                state.showColumns = columnsItems.filter(item => item.checked === true)
+            },
+            { deep: true, immediate: true }
+        )
+
+        watch(
+            () => state.showColumns,
+            (showColumns) => {
+                state.indeterminate = !!showColumns.length && showColumns.length < state.columnsItems.length;
+                state.isCheckedAll = showColumns.length === state.columnsItems.length;
+            },
+            { deep: true }
+        )
+
+        const handleColumnAllClick = (e: Event) => {
+            const checked = (e.target as HTMLInputElement).checked;
+            state.columnsItems = state.columnsItems.map(item => ({ ...item, checked: checked }))
+            state.isCheckedAll = checked
+        }
+
         return () => (
-            <>
-                <Table columns={columns} dataSource={dataSource} pagination={false} />
-            </>
+            <Card
+                title={<Row justify='space-between'>
+                    <div></div>
+                    <div>
+                        <Popover
+                            visible={true}
+                            trigger="click"
+                            placement="bottomRight"
+                            arrowPointAtCenter={true}
+                            title={<Row justify='space-between'>
+                                <div>
+                                    <Checkbox
+                                        v-model={[state.isCheckedAll, 'checked']}
+                                        indeterminate={state.indeterminate}
+                                        onChange={(e) => handleColumnAllClick(e)}
+                                    >
+                                        列展示
+                                    </Checkbox>
+                                </div>
+                                <div>重置</div>
+                            </Row>}
+                            content={
+                                state.columnsItems.map(column => {
+                                    return (
+                                        <div>
+                                            <Checkbox v-model={[column.checked, 'checked']}>
+                                                {column.title}
+                                            </Checkbox>
+                                        </div>
+                                    )
+                                })
+                            }
+                        >
+                            <Tooltip title='列设置'>
+                                <SettingOutlined />
+                            </Tooltip>
+                        </Popover>
+                    </div>
+                </Row>}
+            >
+                <Table columns={state.showColumns} dataSource={dataSource} pagination={false} />
+            </Card>
         )
     }
 })

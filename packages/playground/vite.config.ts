@@ -29,6 +29,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       }
     },
     server: {
+      host: true,
       fs: {
         allow: [
           // search up for workspace root
