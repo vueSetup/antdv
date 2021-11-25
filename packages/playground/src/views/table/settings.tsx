@@ -1,7 +1,10 @@
 import { computed, defineComponent, watch, reactive } from 'vue'
 import { Table, Card, Row, Tooltip, Popover, Checkbox, Button } from 'ant-design-vue'
-import { SettingOutlined } from '@ant-design/icons-vue'
+import { SettingOutlined, DragOutlined } from '@ant-design/icons-vue'
 import { ColumnProps } from 'ant-design-vue/lib/table'
+import { Draggable, Container } from './draggable'
+import styles from './setting.module.less'
+import type { DropResult, } from 'smooth-dnd';
 import 'ant-design-vue/dist/antd.less'
 
 const columns: ColumnProps[] = [
@@ -87,48 +90,71 @@ export default defineComponent({
         }
 
         const handleReset = () => {
-            state.columnsItems = state.columnsItems.map(item => ({ ...item, checked: true }))
+            state.columnsItems = columns.map(item => ({ ...item, checked: true }))
         };
+
+        const handleMove = (index: number, targetIndex: number) => {
+            const newColumnItems = state.columnsItems;
+            const columnItemKey = newColumnItems[index];
+            newColumnItems.splice(index, 1);
+            if (targetIndex === 0) {
+                newColumnItems.unshift(columnItemKey);
+            } else {
+                newColumnItems.splice(targetIndex, 0, columnItemKey);
+            }
+            state.columnsItems = newColumnItems;
+        }
+
+        const renderSetting = () => (
+            <Popover
+                trigger="click"
+                placement="bottomRight"
+                arrowPointAtCenter={true}
+                title={<Row justify='space-between'>
+                    <div>
+                        <Checkbox
+                            v-model={[state.isCheckedAll, 'checked']}
+                            indeterminate={state.indeterminate}
+                            onChange={(e) => handleColumnAllClick(e)}
+                        >
+                            列展示
+                        </Checkbox>
+                    </div>
+                    <div><a onClick={handleReset}>重置</a></div>
+                </Row>}
+                content={
+                    <Container
+                        lockAxis="y"
+                        dragClass="ant-pro-table-drag-ghost"
+                        dropClass="ant-pro-table-drop-ghost"
+                        // @ts-ignore
+                        onDrop={({ removedIndex, addedIndex }) => handleMove(removedIndex, addedIndex)}
+                    >
+                        {
+                            state.columnsItems.map(column => <Draggable>
+                                <div class="ant-pro-table-column-setting-list-item">
+                                    <DragOutlined class={styles.drag} />
+                                    <Checkbox v-model={[column.checked, 'checked']}>
+                                        {column.title}
+                                    </Checkbox>
+                                </div>
+                            </Draggable>)
+                        }
+                    </Container>
+                }
+            >
+                <Tooltip title='列设置'>
+                    <SettingOutlined />
+                </Tooltip>
+            </Popover>
+        )
 
         return () => (
             <Card
+                class={styles.settingTable}
                 title={<Row justify='space-between'>
                     <div></div>
-                    <div>
-                        <Popover
-                            visible={true}
-                            trigger="click"
-                            placement="bottomRight"
-                            arrowPointAtCenter={true}
-                            title={<Row justify='space-between'>
-                                <div>
-                                    <Checkbox
-                                        v-model={[state.isCheckedAll, 'checked']}
-                                        indeterminate={state.indeterminate}
-                                        onChange={(e) => handleColumnAllClick(e)}
-                                    >
-                                        列展示
-                                    </Checkbox>
-                                </div>
-                                <div><a onClick={handleReset}>重置</a></div>
-                            </Row>}
-                            content={
-                                state.columnsItems.map(column => {
-                                    return (
-                                        <div>
-                                            <Checkbox v-model={[column.checked, 'checked']}>
-                                                {column.title}
-                                            </Checkbox>
-                                        </div>
-                                    )
-                                })
-                            }
-                        >
-                            <Tooltip title='列设置'>
-                                <SettingOutlined />
-                            </Tooltip>
-                        </Popover>
-                    </div>
+                    <div>{renderSetting()}</div>
                 </Row>}
             >
                 <Table columns={state.showColumns} dataSource={dataSource} pagination={false} />
